@@ -1,0 +1,89 @@
+import pygame
+
+pygame.init()
+screen = pygame.display.set_mode((1100, 800))
+pygame.display.set_caption("game")
+
+WHITE = (255, 255, 255)
+BLUE = (0, 0, 255)          
+RED = (255, 0, 0)           
+
+def check_collision(player, walls):
+    for wall in walls:
+        if player.colliderect(wall) == True:
+            return True
+    return False
+
+walls = [
+    pygame.Rect(100, 0, 20, 300),
+    pygame.Rect(200, 100, 20, 300),
+    pygame.Rect(300, 0, 20, 250),
+    pygame.Rect(400, 100, 20, 300),
+    pygame.Rect(500, 0, 20, 250)
+]
+
+clock = pygame.time.Clock()
+
+player_x = 30
+player_y = 30
+player_size = 25
+speed = 3
+
+running = True
+
+
+
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+        keys = pygame.key.get_pressed()
+    # Move left
+        if keys[pygame.K_LEFT]:
+            player_x -= speed
+            player = pygame.Rect(player_x, player_y, player_size, player_size)
+
+            if check_collision(player, walls) == True:
+                player_x += speed
+
+        # Move right
+        if keys[pygame.K_RIGHT]:
+            player_x += speed
+            player = pygame.Rect(player_x, player_y, player_size, player_size)
+
+            if check_collision(player, walls) == True:
+                player_x -= speed
+
+        # Move up
+        if keys[pygame.K_UP]:
+            player_y -= speed
+            player = pygame.Rect(player_x, player_y, player_size, player_size)
+
+            if check_collision(player, walls) == True:
+                player_y += speed
+
+        # Move down
+        if keys[pygame.K_DOWN]:
+            player_y += speed
+            player = pygame.Rect(player_x, player_y, player_size, player_size)
+
+            if check_collision(player, walls) == True:
+                player_y -= speed
+
+        player = pygame.Rect(player_x, player_y, player_size, player_size)
+        pygame.draw.rect(screen, RED, player)
+
+        for wall in walls:
+            pygame.draw.rect(screen, BLUE, wall)
+    
+
+    screen.fill(WHITE)
+
+    pygame.display.flip()
+
+    clock.tick(60)
+
+
+
+pygame.quit()
