@@ -6,13 +6,19 @@ def check_collision(player, floors):
             return True
     return False
 
+def jump_collision(player_jump_box, floors):
+    for floor in floors:
+        if player_jump_box.colliderect(floor) == True:
+            return True
+    return False
+
 pygame.init()
 
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 800
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Simple Maze Game")
+pygame.display.set_caption("Side Scroller")
 
 # Set up colours
 SKY_BLUE = (183, 238, 255)
@@ -46,6 +52,10 @@ won = False
 # Main game loop
 while running:
 
+    # Draw the hitbox
+    player_jump_box = pygame.Rect(player_jump_x, player_jump_y, player_size, 2.5)
+    pygame.draw.rect(screen, RED, player_jump_box)
+
     # Check for events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -72,14 +82,22 @@ while running:
 
     if not won:
 
-        # Jump
-        #if player_y
-        if keys[pygame.K_SPACE]:
-            player_y -= 10
-            player = pygame.Rect(player_x, player_y, player_size, player_size)
+        #Gravity
+        if jump_collision(player_jump_box, floors) == False:
+            player_y += 2.5
+        #Sprint
+        if keys[pygame.K_LSHIFT]:
+            speed * 5
 
-            if check_collision(player, floors) == True:
-                            player_x += speed
+        # Jump
+        if jump_collision(player_jump_box, floors) == True:
+            if keys[pygame.K_SPACE]:
+                player_y -= 5
+
+                player = pygame.Rect(player_x, player_y, player_size, player_size)
+
+                if check_collision(player, floors) == True:
+                    player_x += speed
     
         # Move left
         if keys[pygame.K_LEFT]:
@@ -98,20 +116,20 @@ while running:
                 player_x -= speed
 
         # Move up
-        if keys[pygame.K_UP]:
-            player_y -= speed
-            player = pygame.Rect(player_x, player_y, player_size, player_size)
+        #if keys[pygame.K_UP]:
+        #    player_y -= speed
+        #    player = pygame.Rect(player_x, player_y, player_size, player_size)
 
-            if check_collision(player, floors) == True:
-                player_y += speed
+        #    if check_collision(player, floors) == True:
+        #        player_y += speed
 
         # Move down
-        if keys[pygame.K_DOWN]:
-            player_y += speed
-            player = pygame.Rect(player_x, player_y, player_size, player_size)
+        #if keys[pygame.K_DOWN]:
+        #    player_y += speed
+        #    player = pygame.Rect(player_x, player_y, player_size, player_size)
 
-            if check_collision(player, floors) == True:
-                player_y -= speed
+        #    if check_collision(player, floors) == True:
+        #        player_y -= speed
 
     # Draw the background
     screen.fill(SKY_BLUE)
@@ -122,14 +140,9 @@ while running:
     player_jump_x = player_x
     player_jump_y = player_y + 35
 
-    # Draw the hitbox
-    player_jump_box = pygame.Rect(player_jump_x, player_jump_y, player_size, 5)
-    pygame.draw.rect(screen, RED, player_jump_box)
     # Draw the player
     player = pygame.Rect(player_x, player_y, player_size, player_size)
     pygame.draw.ellipse(screen, YELLOW, player)
-
-    
 
     # Update the display
     pygame.display.flip()
