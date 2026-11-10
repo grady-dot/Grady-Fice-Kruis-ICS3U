@@ -42,6 +42,9 @@ player_jump_y = player_y + 35
 # Create the maze walls
 floors = [
     pygame.Rect(0, 700, 1500, 500),
+    pygame.Rect(0, 500, 100, 500),
+    pygame.Rect(900, 500, 100, 500),
+    pygame.Rect(500, 650, 500, 500),
 ]
 
 # Set up the game
@@ -53,8 +56,7 @@ won = False
 while running:
 
     # Draw the hitbox
-    player_jump_box = pygame.Rect(player_jump_x, player_jump_y, player_size, 2.5)
-    pygame.draw.rect(screen, RED, player_jump_box)
+    player_jump_box = pygame.Rect(player_jump_x, player_jump_y, player_size - 0.5, 3)
 
     # Check for events
     for event in pygame.event.get():
@@ -84,15 +86,12 @@ while running:
 
         #Gravity
         if jump_collision(player_jump_box, floors) == False:
-            player_y += 2.5
-        #Sprint
-        if keys[pygame.K_LSHIFT]:
-            speed * 5
+            player_y += 3
 
         # Jump
         if jump_collision(player_jump_box, floors) == True:
             if keys[pygame.K_SPACE]:
-                player_y -= 5
+                player_y -= 100
 
                 player = pygame.Rect(player_x, player_y, player_size, player_size)
 
