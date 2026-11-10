@@ -1,4 +1,4 @@
-import pygame
+import pygame, os, time 
 
 def check_collision(player, floors):
     for floor in floors:
@@ -92,6 +92,9 @@ while running:
         if jump_collision(player_jump_box, floors) == True:
             if keys[pygame.K_SPACE]:
                 player_y -= 100
+                pygame.mixer.init()
+                pygame.mixer.music.load("Jump.mp3")
+                pygame.mixer.music.play()
 
                 player = pygame.Rect(player_x, player_y, player_size, player_size)
 
