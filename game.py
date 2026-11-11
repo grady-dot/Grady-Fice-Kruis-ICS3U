@@ -39,6 +39,9 @@ speed = 3
 player_jump_x = player_x
 player_jump_y = player_y + 35
 
+jumping = False
+previous_y = 0
+
 # Create the maze walls
 floors = [
     pygame.Rect(0, 700, 1500, 500),
@@ -90,10 +93,12 @@ while running:
 
         # Jump
         if jump_collision(player_jump_box, floors) == True:
+            #if jump == False:
+            #   previous_y = player_y
             if keys[pygame.K_SPACE]:
                 player_y -= 100
                 pygame.mixer.init()
-                pygame.mixer.music.load("Jump.mp3")
+                pygame.mixer.music.load("action_jump.mp3")
                 pygame.mixer.music.play()
 
                 player = pygame.Rect(player_x, player_y, player_size, player_size)
