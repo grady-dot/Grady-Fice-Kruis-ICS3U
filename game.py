@@ -105,6 +105,9 @@ while running:
 
         if check_coin(player, coins) == True:
             score+=1
+            pygame.mixer.init()
+            pygame.mixer.music.load("Coins.mp3")
+            pygame.mixer.music.play()
 
         #Gravity
         if jump_collision(player_jump_box, floors) == False:
