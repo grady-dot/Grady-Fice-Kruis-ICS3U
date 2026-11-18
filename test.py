@@ -64,14 +64,21 @@ floors = [
     pygame.Rect(0, 700, 1500, 500),
     pygame.Rect(0, 500, 100, 500),
     pygame.Rect(900, 500, 100, 500),
-    pygame.Rect(500, 650, 500, 500),
     pygame.Rect(500, 500, 300, 50),
-    pygame.Rect(100, 500, 100, 50),
+    pygame.Rect(500, 300, 300, 50),
+    pygame.Rect(200, 600, 300, 50),
+    pygame.Rect(200, 400, 300, 50),
 ]
 
 coins = [
-    pygame.Rect(500, 450, 25, 25)
+    pygame.Rect(638, 250, 25, 25),
+    pygame.Rect(338, 350, 25, 25),
+    pygame.Rect(638, 450, 25, 25),
+    pygame.Rect(338, 550, 25, 25),
 ]
+
+
+coin_hitbox = []
 
 # Main game loop
 while running:
@@ -110,6 +117,7 @@ while running:
             pygame.mixer.init()
             pygame.mixer.music.load("Coins.mp3")
             pygame.mixer.music.play()
+            coins.pop(0)
 
         # Gravity
         if jump == False:
@@ -131,6 +139,10 @@ while running:
         if jump == True:
             player_y += jump_speed
             jump_speed += 0.5
+            if check_collision(player, floors) == True:
+                player_y -= jump_speed
+                jump = False
+
 
             if jump_speed > 10:
                 jump_speed = 10
@@ -142,6 +154,7 @@ while running:
 
             if check_collision(player, floors) == True:
                 player_x += speed
+                jumping = False
 
         # Move right
         if keys[pygame.K_d]:
@@ -150,6 +163,7 @@ while running:
 
             if check_collision(player, floors) == True:
                 player_x -= speed
+                jumping = False
 
     # Draw the background
     screen.fill(SKY_BLUE)
@@ -160,11 +174,14 @@ while running:
 
     # Keeps the player from dropping through the world
     player_jump_x = player_x
-    player_jump_y = player_y + 35
+    player_jump_y = player_y + 100
 
     # Draw the coins
     for coin in coins:
         pygame.draw.ellipse(screen, GOLD, coin)
+        coin_rect = pygame.Rect(coin)
+        coin_hitbox.append(coin_rect)
+    
 
     # Draw the player
     player = pygame.Rect(player_x, player_y, player_size, player_size)
