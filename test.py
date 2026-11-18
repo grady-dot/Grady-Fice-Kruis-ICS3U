@@ -1,3 +1,4 @@
+
 import pygame, os, time
 
 
@@ -111,13 +112,10 @@ while running:
             pygame.mixer.music.play()
 
         # Gravity
-        if jump_collision(player_jump_box, floors) == False:
-            jump_speed = 5
-            player_y += jump_speed
-
-        else:
-            jump_speed = 0
-            jump = False
+        if jump == False:
+            if jump_collision(player_jump_box, floors) == False:
+                jump_speed = 5
+                player_y += jump_speed
 
         # Jump
         if keys[pygame.K_SPACE]:
@@ -133,6 +131,9 @@ while running:
         if jump == True:
             player_y += jump_speed
             jump_speed += 0.5
+
+            if jump_speed > 10:
+                jump_speed = 10
 
         # Move left
         if keys[pygame.K_a]:
