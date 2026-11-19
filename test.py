@@ -18,9 +18,10 @@ def jump_collision(player_jump_box, floors):
 
 def check_coin(player, coins):
     for coin in coins:
-        if player.colliderect(coin) == True:
-            return True
-    return False
+        if player.colliderect(coin):
+            return coin
+
+    return None
 
 
 pygame.init()
@@ -117,13 +118,18 @@ while running:
             pygame.mixer.init()
             pygame.mixer.music.load("Coins.mp3")
             pygame.mixer.music.play()
-            coins.pop(0)
+            
 
+        # Gravity
         # Gravity
         if jump == False:
             if jump_collision(player_jump_box, floors) == False:
-                jump_speed = 5
-                player_y += jump_speed
+                player_y += 5
+            else:
+                #player_y -= 1
+                for floor in floors:
+                    if player_jump_box.colliderect(floor):
+                        player_y = floor.top - player_size
 
         # Jump
         if keys[pygame.K_SPACE]:
@@ -165,6 +171,17 @@ while running:
                 player_x -= speed
                 jumping = False
 
+    # Check for coins
+    collected_coin = check_coin(player, coins)
+
+    if collected_coin != None:
+        score += 1
+
+        pygame.mixer.init()
+        pygame.mixer.music.load("Coins.mp3")
+        pygame.mixer.music.play()
+
+        coins.remove(collected_coin)
     # Draw the background
     screen.fill(SKY_BLUE)
 
