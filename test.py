@@ -15,6 +15,12 @@ def jump_collision(player_jump_box, floors):
             return True
     return False
 
+def enemy_1_collision(enemy_hitbox_1, player_jump_box):
+    for floor in floors:
+        if enemy_hitbox_1.colliderect(player_jump_box) == True:
+            return True
+    return False
+
 
 def check_coin(player, coins):
     for coin in coins:
@@ -46,6 +52,7 @@ RED = (255, 0, 0)
 GREEN = (91, 179, 59)
 BLACK = (0, 0, 0)
 PLAYER = (255, 76, 181)
+ENEMY1 = (245, 141, 66)
 GOLD = (252, 215, 6)
 
 # Set up the player
@@ -56,6 +63,12 @@ speed = 5
 
 player_jump_x = player_x
 player_jump_y = player_y + 35
+
+# Set up triangle enemy
+enemy_1_x = 800
+enemy_1_y = 660
+enemy_1_size = 40
+
 
 jump = False
 jump_speed = 0
@@ -76,6 +89,16 @@ coins = [
     pygame.Rect(338, 350, 25, 25),
     pygame.Rect(638, 450, 25, 25),
     pygame.Rect(338, 550, 25, 25),
+]
+
+enemies_1 = [
+    pygame.Rect(enemy_1_x, enemy_1_y, enemy_1_size, enemy_1_size),
+    pygame.Rect(enemy_1_x, enemy_1_y - 50, enemy_1_size, enemy_1_size),
+    ]
+
+enemies_hitbox_1 = [
+    pygame.Rect(enemy_1_x, enemy_1_y - 10, enemy_1_size, 10),
+    pygame.Rect(enemy_1_x, enemy_1_y - 60, enemy_1_size, 10),
 ]
 
 
@@ -112,6 +135,8 @@ while running:
 
         # Draw the hitbox
         player_jump_box = pygame.Rect(player_x, player_y + player_size, player_size, 3)
+
+        enemy_hitbox_1 = pygame.Rect(enemy_1_x, enemy_1_y - 10, enemy_1_size, 10)
 
         if check_coin(player, coins) == True:
             score += 1
@@ -171,6 +196,13 @@ while running:
                 player_x -= speed
                 jumping = False
 
+        # Enemy 1 movements
+
+        if enemy_1_collision(enemy_hitbox_1, player_jump_box) == True:
+            enemies_1.remove()
+            enemies_hitbox_1.remove()
+
+
     # Check for coins
     collected_coin = check_coin(player, coins)
 
@@ -203,6 +235,16 @@ while running:
     # Draw the player
     player = pygame.Rect(player_x, player_y, player_size, player_size)
     pygame.draw.ellipse(screen, PLAYER, player)
+
+    # Draw the enemy
+    #enemy_1 = pygame.Rect(enemy_1_x, enemy_1_y, enemy_1_size, enemy_1_size)
+    for enemy_1 in enemies_1:
+        pygame.draw.ellipse(screen, ENEMY1, enemy_1)
+
+    # Draw enemy hitbox
+    #enemy_hitbox_1 = pygame.Rect(enemy_1_x, enemy_1_y - 10, enemy_1_size, 10)
+    for enemy_hitbox_1 in enemies_hitbox_1:
+        pygame.draw.rect(screen, RED, enemy_hitbox_1)
 
     font = pygame.font.SysFont(None, 48)
     message = font.render("COINS: " + str(score), True, GOLD)
