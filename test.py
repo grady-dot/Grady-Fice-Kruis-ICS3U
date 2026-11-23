@@ -16,7 +16,7 @@ def jump_collision(player_jump_box, floors):
     return False
 
 def enemy_1_collision(enemy_hitbox_1, player_jump_box):
-    for floor in floors:
+    for enemy_hitbox_1 in enemies_hitbox_1:
         if enemy_hitbox_1.colliderect(player_jump_box) == True:
             return True
     return False
@@ -93,12 +93,12 @@ coins = [
 
 enemies_1 = [
     pygame.Rect(enemy_1_x, enemy_1_y, enemy_1_size, enemy_1_size),
-    pygame.Rect(enemy_1_x, enemy_1_y - 50, enemy_1_size, enemy_1_size),
+    pygame.Rect(enemy_1_x - 100, enemy_1_y, enemy_1_size, enemy_1_size),
     ]
 
 enemies_hitbox_1 = [
     pygame.Rect(enemy_1_x, enemy_1_y - 10, enemy_1_size, 10),
-    pygame.Rect(enemy_1_x, enemy_1_y - 60, enemy_1_size, 10),
+    pygame.Rect(enemy_1_x - 100, enemy_1_y - 10, enemy_1_size, 10),
 ]
 
 
@@ -106,6 +106,9 @@ coin_hitbox = []
 
 # Main game loop
 while running:
+
+    # Draw the background
+    screen.fill(SKY_BLUE)
 
     # Check for events
     for event in pygame.event.get():
@@ -134,24 +137,17 @@ while running:
         player = pygame.Rect(player_x, player_y, player_size, player_size)
 
         # Draw the hitbox
-        player_jump_box = pygame.Rect(player_x, player_y + player_size, player_size, 3)
+        player_jump_box = pygame.Rect(player_x + 5, player_y + player_size, player_size - 10, 3)
+        pygame.draw.rect(screen, RED, player_jump_box)
 
         enemy_hitbox_1 = pygame.Rect(enemy_1_x, enemy_1_y - 10, enemy_1_size, 10)
-
-        if check_coin(player, coins) == True:
-            score += 1
-            pygame.mixer.init()
-            pygame.mixer.music.load("Coins.mp3")
-            pygame.mixer.music.play()
             
-
         # Gravity
         # Gravity
         if jump == False:
             if jump_collision(player_jump_box, floors) == False:
-                player_y += 5
+                player_y += 7
             else:
-                #player_y -= 1
                 for floor in floors:
                     if player_jump_box.colliderect(floor):
                         player_y = floor.top - player_size
@@ -199,13 +195,19 @@ while running:
         # Enemy 1 movements
 
         if enemy_1_collision(enemy_hitbox_1, player_jump_box) == True:
-            enemies_1.remove()
-            enemies_hitbox_1.remove()
+            if jump_speed >= 0:
+                if len(enemies_1) >= 1: 
+                    enemies_1.pop(0)
+                    enemies_hitbox_1.pop(0)
+                    pygame.mixer.init()
+                    pygame.mixer.music.load("Kill.mp3")
+                    pygame.mixer.music.play()
+
 
 
     # Check for coins
     collected_coin = check_coin(player, coins)
-
+    
     if collected_coin != None:
         score += 1
 
@@ -214,8 +216,12 @@ while running:
         pygame.mixer.music.play()
 
         coins.remove(collected_coin)
+
+    #select_enemy = 
+    # if selected_enemy != None:
+    #   enemies.remove(selected_enemy)
     # Draw the background
-    screen.fill(SKY_BLUE)
+    #screen.fill(SKY_BLUE)
 
     # Draw the floors
     for floor in floors:
@@ -235,6 +241,14 @@ while running:
     # Draw the player
     player = pygame.Rect(player_x, player_y, player_size, player_size)
     pygame.draw.ellipse(screen, PLAYER, player)
+    eye_1 = pygame.Rect(player_x, player_y + 2, player_size / 2, player_size / 2)
+    pygame.draw.ellipse(screen, WHITE, eye_1)
+    eye_2 = pygame.Rect(player_x + 18, player_y + 2, player_size / 2, player_size / 2)
+    pygame.draw.ellipse(screen, WHITE, eye_2)
+    eye_3 = pygame.Rect(player_x + 3, player_y + 5, player_size / 3, player_size / 3)
+    pygame.draw.ellipse(screen, BLACK, eye_3)
+    eye_4 = pygame.Rect(player_x + 21, player_y + 5, player_size / 3, player_size / 3)
+    pygame.draw.ellipse(screen, BLACK, eye_4)
 
     # Draw the enemy
     #enemy_1 = pygame.Rect(enemy_1_x, enemy_1_y, enemy_1_size, enemy_1_size)
