@@ -49,7 +49,7 @@ score = 0
 SKY_BLUE = (143, 203, 255)
 GRASS_GREEN = (131, 252, 77)
 WHITE = (255, 255, 255)
-BLUE = (0, 0, 200)
+POWER1 = (252, 3, 53)
 RED = (255, 0, 0)
 GREEN = (91, 179, 59)
 BLACK = (0, 0, 0)
@@ -141,7 +141,7 @@ while running:
 
         # Draw the hitbox
         player_jump_box = pygame.Rect(player_x + 5, player_y + player_size, player_size - 10, 3)
-        pygame.draw.rect(screen, RED, player_jump_box)
+        #pygame.draw.rect(screen, RED, player_jump_box)
 
         enemy_hitbox_1 = pygame.Rect(enemy_1_x, enemy_1_y - 10, enemy_1_size, 10)
             
@@ -214,8 +214,6 @@ while running:
                 pygame.mixer.music.load("Kill.mp3")
                 pygame.mixer.music.play()
 
-
-
     # Check for coins
     collected_coin = check_coin(player, coins)
     
@@ -241,6 +239,10 @@ while running:
         pygame.draw.ellipse(screen, GOLD, coin)
         coin_rect = pygame.Rect(coin)
         coin_hitbox.append(coin_rect)
+
+    # Power Ups
+    power_1 = pygame.Rect(37.5, 450, 25, 25)
+    pygame.draw.ellipse(screen, POWER1, power_1)
     
 
     # Draw the player
@@ -262,8 +264,8 @@ while running:
 
     # Draw enemy hitbox
     #enemy_hitbox_1 = pygame.Rect(enemy_1_x, enemy_1_y - 10, enemy_1_size, 10)
-    for enemy_hitbox_1 in enemies_hitbox_1:
-        pygame.draw.rect(screen, RED, enemy_hitbox_1)
+    #for enemy_hitbox_1 in enemies_hitbox_1:
+        #pygame.draw.rect(screen, RED, enemy_hitbox_1)
 
     font = pygame.font.SysFont(None, 48)
     message = font.render("COINS: " + str(score), True, GOLD)
