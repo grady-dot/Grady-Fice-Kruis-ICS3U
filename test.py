@@ -31,7 +31,6 @@ def check_coin(player, coins):
 
     return None
 
-
 pygame.init()
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 800
@@ -57,6 +56,15 @@ PLAYER = (255, 76, 181)
 ENEMY1 = (245, 141, 66)
 GOLD = (252, 215, 6)
 
+pygame.init()
+pygame.mixer.init()
+
+jump_sound = pygame.mixer.Sound("Jumper.mp3")
+power_sound = pygame.mixer.Sound("powerup.mp3")
+powerdown_sound = pygame.mixer.Sound("powerdown.mp3")
+kill_sound = pygame.mixer.Sound("Kill.mp3")
+coin_sound = pygame.mixer.Sound("Coins.mp3")
+
 # Set up the player
 player_x = 100
 player_y = 650
@@ -71,7 +79,6 @@ enemy_1_x = 800
 enemy_1_y = 660
 enemy_1_size = 40
 enemy_1_speed = 3
-
 
 jump = False
 jump_speed = 0
@@ -103,6 +110,8 @@ enemies_hitbox_1 = [
     pygame.Rect(enemy_1_x, enemy_1_y - 3, enemy_1_size, 3),
     pygame.Rect(enemy_1_x - 100, enemy_1_y - 3, enemy_1_size, 3),
 ]
+
+power_1 = pygame.Rect(37.5, 450, 25, 25)
 
 
 coin_hitbox = []
@@ -161,9 +170,9 @@ while running:
                 jump = True
                 jump_speed = -10
 
-                pygame.mixer.init()
-                pygame.mixer.music.load("Jumper.mp3")
-                pygame.mixer.music.play()
+                #pygame.mixer.init()
+                jump_sound.play()
+                #pygame.mixer.Sound.play()
 
         # Move the player while jumping
         if jump == True:
@@ -194,15 +203,19 @@ while running:
                 player_x -= speed
                 jumping = False
 
+        # Power Ups
+        if player.colliderect(power_1) == True:
+            power_1 = pygame.Rect(-1000, -1000, 25, 25)
+            jump_speed * 2
+            power_sound.play()
+            
+
         # Enemy 1 movements
         #for enemy_1 in enemies_1 and enemy_hitbox_1 in enemies_hitbox_1
         #enemy_1_x += enemy_1_speed
         
-
-
-
         #if enemy_1_collision(enemy_hitbox_1, player_jump_box) == True:
-        if jump_speed >= 0:
+        if jump_speed >= 0 or jump_collision == False:
             select_enemy = enemy_1_collision(enemy_hitbox_1, player_jump_box)
             if select_enemy != None:
                 enemies_1.remove(select_enemy)
@@ -210,9 +223,7 @@ while running:
             #if len(enemies_1) >= 1:
                 #enemies_1.pop(0)
                 #enemies_hitbox_1.pop(0)
-                pygame.mixer.init()
-                pygame.mixer.music.load("Kill.mp3")
-                pygame.mixer.music.play()
+                kill_sound.play()
 
     # Check for coins
     collected_coin = check_coin(player, coins)
@@ -220,9 +231,7 @@ while running:
     if collected_coin != None:
         score += 1
 
-        pygame.mixer.init()
-        pygame.mixer.music.load("Coins.mp3")
-        pygame.mixer.music.play()
+        coin_sound.play()
 
         coins.remove(collected_coin)
 
@@ -241,7 +250,7 @@ while running:
         coin_hitbox.append(coin_rect)
 
     # Power Ups
-    power_1 = pygame.Rect(37.5, 450, 25, 25)
+    #power_1 = pygame.Rect(37.5, 450, 25, 25)
     pygame.draw.ellipse(screen, POWER1, power_1)
     
 
