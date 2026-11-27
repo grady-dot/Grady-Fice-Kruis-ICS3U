@@ -8,6 +8,12 @@ def check_collision(player, floors):
             return True
     return False
 
+def check_collision_enemy(player, enemies_1):
+    for enemy_1 in enemies_1:
+        if player.colliderect(enemy_1) == True:
+            return True
+    return False
+
 
 def jump_collision(player_jump_box, floors):
     for floor in floors:
@@ -58,25 +64,33 @@ GOLD = (252, 215, 6)
 
 pygame.init()
 pygame.mixer.init()
+pygame.mixer.set_num_channels(10000)
 
 jump_sound = pygame.mixer.Sound("Jumper.mp3")
 power_sound = pygame.mixer.Sound("powerup.mp3")
 powerdown_sound = pygame.mixer.Sound("powerdown.mp3")
 kill_sound = pygame.mixer.Sound("Kill.mp3")
+kill_2_sound = pygame.mixer.Sound("Kill2.mp3")
 coin_sound = pygame.mixer.Sound("Coins.mp3")
+death_sound = pygame.mixer.Sound("Death.mp3")
+win_sound = pygame.mixer.Sound("Win.mp3")
 
 # Set up the player
+player_xstart = 100
+player_ystart = 650
 player_x = 100
 player_y = 650
 player_size = 35
+counter = 0
+
 speed = 5
 
 player_jump_x = player_x
 player_jump_y = player_y + 35
 
 # Set up triangle enemy
-enemy_1_x = 800
-enemy_1_y = 660
+enemy_1_x = 600
+enemy_1_y = 260
 enemy_1_size = 40
 enemy_1_speed = 3
 
@@ -103,16 +117,18 @@ coins = [
 
 enemies_1 = [
     pygame.Rect(enemy_1_x, enemy_1_y, enemy_1_size, enemy_1_size),
-    pygame.Rect(enemy_1_x - 100, enemy_1_y, enemy_1_size, enemy_1_size),
+    pygame.Rect(enemy_1_x - 50, enemy_1_y + 200, enemy_1_size, enemy_1_size),
+    pygame.Rect(enemy_1_x - 300, enemy_1_y + 100, enemy_1_size, enemy_1_size),
+    pygame.Rect(enemy_1_x - 400, enemy_1_y + 300, enemy_1_size, enemy_1_size),
     ]
 
-enemies_hitbox_1 = [
-    pygame.Rect(enemy_1_x, enemy_1_y - 3, enemy_1_size, 3),
-    pygame.Rect(enemy_1_x - 100, enemy_1_y - 3, enemy_1_size, 3),
-]
+#enemies_hitbox_1 = [
+#    pygame.Rect(enemy_1_x, enemy_1_y - 3, enemy_1_size, 3),
+#    pygame.Rect(enemy_1_x - 100, enemy_1_y - 3, enemy_1_size, 3),
+#]
 
-power_1 = pygame.Rect(37.5, 450, 25, 25)
-
+# Power Ups
+power_1 = pygame.Rect(850, player_y, 25, 25)
 
 coin_hitbox = []
 
@@ -144,6 +160,8 @@ while running:
         player_y = SCREEN_HEIGHT - player_size
 
     if not won:
+
+        counter = counter + 0.0166666666667
 
         # Update the player rectangle
         player = pygame.Rect(player_x, player_y, player_size, player_size)
@@ -206,7 +224,8 @@ while running:
         # Power Ups
         if player.colliderect(power_1) == True:
             power_1 = pygame.Rect(-1000, -1000, 25, 25)
-            jump_speed * 2
+            speed = speed * 2
+            PLAYER = (131, 52, 235)
             power_sound.play()
             
 
@@ -215,16 +234,31 @@ while running:
         #enemy_1_x += enemy_1_speed
         
         #if enemy_1_collision(enemy_hitbox_1, player_jump_box) == True:
-        if jump_speed >= 0 or jump_collision == False:
-            select_enemy = enemy_1_collision(enemy_hitbox_1, player_jump_box)
-            if select_enemy != None:
-                enemies_1.remove(select_enemy)
-                #enemies_1.pop(select_enemy)
+        #if jump_speed >= 0 or jump_collision == False:
+        #    select_enemy = enemy_1_collision(enemy_hitbox_1, player_jump_box)
+        #    if select_enemy != None:
+        #        enemies_1.remove(select_enemy)
             #if len(enemies_1) >= 1:
                 #enemies_1.pop(0)
                 #enemies_hitbox_1.pop(0)
-                kill_sound.play()
+        #        kill_sound.play()
 
+        if check_collision_enemy(player,enemies_1) == True:
+            player_y = player_ystart
+            player_x = player_xstart
+            death_sound.play()
+            kill_2_sound.play()
+
+    # Coin Goal
+    if score == 4:
+        pygame.mixer.stop()
+        win_sound.play()
+        time.sleep(5)
+        win_sound.stop()
+        score = 0
+        pygame.quit
+        
+            
     # Check for coins
     collected_coin = check_coin(player, coins)
     
@@ -252,7 +286,6 @@ while running:
     # Power Ups
     #power_1 = pygame.Rect(37.5, 450, 25, 25)
     pygame.draw.ellipse(screen, POWER1, power_1)
-    
 
     # Draw the player
     player = pygame.Rect(player_x, player_y, player_size, player_size)
@@ -276,9 +309,15 @@ while running:
     #for enemy_hitbox_1 in enemies_hitbox_1:
         #pygame.draw.rect(screen, RED, enemy_hitbox_1)
 
+    # HUD
     font = pygame.font.SysFont(None, 48)
     message = font.render("COINS: " + str(score), True, GOLD)
     screen.blit(message, (10, 0))
+
+    font = pygame.font.SysFont(None, 48)
+    game_time = round(counter)
+    message_2 = font.render("TIMER: " + str(game_time), True, BLACK)
+    screen.blit(message_2, (800, 0))
 
     # Update the display
     pygame.display.flip()
